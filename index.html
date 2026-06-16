@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Khud Ki Dukan – Good Products, Best Prices</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <!-- Web3Forms: no backend needed, free email delivery -->
   <style>
     /* ── TOKENS ──────────────────────────────────────────── */
     :root {
@@ -502,7 +502,7 @@
 <!-- FOOTER -->
 <footer>
   <p>© 2025 <strong>Khud Ki Dukan</strong> · Good Products, Best Prices</p>
-  <p style="margin-top:6px">Questions? <a href="mailto:khudkidukan@gmail.com">khudkidukan@gmail.com</a></p>
+  <p style="margin-top:6px">Questions? <a href="mailto:animoghao8@gmail.com">animoghao8@gmail.com</a></p>
 </footer>
 
 <!-- TOAST -->
@@ -623,72 +623,98 @@
     document.body.style.overflow='';
   }
 
-  /* ── SEND ORDER VIA EMAILJS ────────────────── */
-  // Initialize EmailJS (user must replace with their own public key)
-  (function(){
-    emailjs.init({ publicKey: "YOUR_EMAILJS_PUBLIC_KEY" });
-  })();
+  /* ── SEND ORDER VIA WEB3FORMS ──────────────── */
+  // Web3Forms Access Key for animoghao8@gmail.com
+  // Steps: go to https://web3forms.com → enter animoghao8@gmail.com → copy key → paste below
+  const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY";
 
-  function sendOrder() {
+  async function sendOrder() {
     const name  = document.getElementById('cust-name').value.trim();
     const phone = document.getElementById('cust-phone').value.trim();
     const note  = document.getElementById('cust-note').value.trim();
 
-    if(!name)  { showToast('⚠️ Please enter your name'); return; }
-    if(!phone) { showToast('⚠️ Please enter your phone number'); return; }
-    if(!cart.length){ showToast('Cart is empty!'); return; }
+    if(!name)  { showToast('⚠️ Apna naam likhein'); return; }
+    if(!phone) { showToast('⚠️ Phone number likhein'); return; }
+    if(!cart.length){ showToast('Cart khali hai!'); return; }
 
     const itemLines = cart.map(i=>
       `• ${i.name} × ${i.qty} = ₹${(i.price*i.qty).toLocaleString('en-IN')}`
     ).join('\n');
     const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
 
-    const orderText = `
-ORDER DETAILS
-─────────────────────────────
-Customer : ${name}
-Phone    : ${phone}
-─────────────────────────────
-Items:
-${itemLines}
-─────────────────────────────
-TOTAL    : ₹${total.toLocaleString('en-IN')}
-${note ? '\nNote: '+note : ''}
+    const orderHTML = `
+<h2 style="color:#d4a847">🛍 New Order — Khud Ki Dukan</h2>
+<table style="border-collapse:collapse;font-family:sans-serif;font-size:15px">
+  <tr><td style="padding:6px 12px;color:#888">Customer</td><td style="padding:6px 12px"><strong>${name}</strong></td></tr>
+  <tr><td style="padding:6px 12px;color:#888">Phone</td><td style="padding:6px 12px"><strong>${phone}</strong></td></tr>
+</table>
+<hr style="margin:12px 0"/>
+<h3 style="font-family:sans-serif">Items Ordered:</h3>
+<table style="border-collapse:collapse;font-family:sans-serif;font-size:15px;width:100%">
+  <thead><tr style="background:#f5f5f5">
+    <th style="padding:8px;text-align:left">Product</th>
+    <th style="padding:8px;text-align:center">Qty</th>
+    <th style="padding:8px;text-align:right">Amount</th>
+  </tr></thead>
+  <tbody>
+    ${cart.map(i=>`<tr>
+      <td style="padding:8px">${i.name}</td>
+      <td style="padding:8px;text-align:center">${i.qty}</td>
+      <td style="padding:8px;text-align:right">₹${(i.price*i.qty).toLocaleString('en-IN')}</td>
+    </tr>`).join('')}
+  </tbody>
+  <tfoot><tr style="background:#fff8e1">
+    <td colspan="2" style="padding:10px;font-weight:bold">TOTAL</td>
+    <td style="padding:10px;text-align:right;font-weight:bold;color:#d4a847">₹${total.toLocaleString('en-IN')}</td>
+  </tfoot>
+</table>
+${note ? `<p style="font-family:sans-serif;margin-top:12px"><strong>Note:</strong> ${note}</p>` : ''}
     `.trim();
 
     const btn = document.getElementById('send-btn');
     btn.disabled = true;
-    btn.textContent = 'Sending…';
+    btn.textContent = '⏳ Sending…';
 
-    // EmailJS send — replace service_id and template_id with your own
-    emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-      to_email:  "khudkidukan@gmail.com",
-      from_name: name,
-      phone:     phone,
-      order:     orderText,
-      total:     '₹' + total.toLocaleString('en-IN'),
-    })
-    .then(()=>{
-      showToast('✅ Order sent! We\'ll contact you soon.');
-      cart = [];
-      updateCartUI();
-      document.getElementById('cust-name').value='';
-      document.getElementById('cust-phone').value='';
-      document.getElementById('cust-note').value='';
-      closeCart();
-    })
-    .catch(err=>{
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `🛒 New Order from ${name} — Khud Ki Dukan`,
+          from_name: `${name} (Khud Ki Dukan)`,
+          email: 'animoghao8@gmail.com',
+          message: orderHTML,
+          // Plain text fallback
+          body_text: `ORDER\nCustomer: ${name}\nPhone: ${phone}\n\n${itemLines}\n\nTOTAL: ₹${total.toLocaleString('en-IN')}${note?'\nNote: '+note:''}`,
+        })
+      });
+      const data = await res.json();
+
+      if(data.success) {
+        showToast('✅ Order bhej diya! Hum jald contact karenge.');
+        cart = [];
+        updateCartUI();
+        document.getElementById('cust-name').value='';
+        document.getElementById('cust-phone').value='';
+        document.getElementById('cust-note').value='';
+        closeCart();
+      } else {
+        throw new Error(data.message || 'Failed');
+      }
+    } catch(err) {
       console.error(err);
-      // Fallback: open mailto
-      const subject = encodeURIComponent('New Order from '+name);
-      const body    = encodeURIComponent(orderText);
-      window.open(`mailto:khudkidukan@gmail.com?subject=${subject}&body=${body}`);
-      showToast('📧 Opening email client as fallback…');
-    })
-    .finally(()=>{
+      if(WEB3FORMS_KEY === 'a8692174-250a-4d1b-b9c5-f3d6a49d00e7') {
+        showToast('⚠️ Web3Forms key set karein (README dekho)');
+        // Show setup instructions
+        alert('Setup karna hai:\n\n1. https://web3forms.com par jao\n2. "animoghao8@gmail.com" enter karo\n3. Jo Access Key mile, use HTML file mein\n   WEB3FORMS_KEY variable mein paste karo\n\nYe bilkul free hai, koi sign-up nahi!');
+      } else {
+        showToast('❌ Error aaya. Dobara try karein.');
+      }
+    } finally {
       btn.disabled = false;
       btn.textContent = '📧 Send Order via Email';
-    });
+    }
   }
 
   /* ── TOAST ─────────────────────────────────── */
