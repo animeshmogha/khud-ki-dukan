@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -502,7 +503,7 @@
 <!-- FOOTER -->
 <footer>
   <p>© 2025 <strong>Khud Ki Dukan</strong> · Good Products, Best Prices</p>
-  <p style="margin-top:6px">Questions? <a href="mailto:animogha08@gmail.com">animogha08@gmail.com</a></p>
+  <p style="margin-top:6px">Questions? <a href="mailto:khudkidukan@gmail.com">khudkidukan@gmail.com</a></p>
 </footer>
 
 <!-- TOAST -->
@@ -624,9 +625,9 @@
   }
 
   /* ── SEND ORDER VIA WEB3FORMS ──────────────── */
-  // Web3Forms Access Key for animogha08@gmail.com
-  // Steps: go to https://web3forms.com → enter animogha08@gmail.com → copy key → paste below
-  const WEB3FORMS_KEY = "YOUR_WEB3FORMS_ACCESS_KEY";
+  // Web3Forms Access Key for khudkidukan@gmail.com
+  // Steps: go to https://web3forms.com → enter khudkidukan@gmail.com → copy key → paste below
+  const WEB3FORMS_KEY = "a8692174-250a-4d1b-b9c5-f3d6a49d00e7";
 
   async function sendOrder() {
     const name  = document.getElementById('cust-name').value.trim();
@@ -704,10 +705,10 @@ ${note ? `<p style="font-family:sans-serif;margin-top:12px"><strong>Note:</stron
       }
     } catch(err) {
       console.error(err);
-      if(WEB3FORMS_KEY === 'a8692174-250a-4d1b-b9c5-f3d6a49d00e7') {
+      if(WEB3FORMS_KEY === 'YOUR_WEB3FORMS_ACCESS_KEY') {
         showToast('⚠️ Web3Forms key set karein (README dekho)');
         // Show setup instructions
-        alert('Setup karna hai:\n\n1. https://web3forms.com par jao\n2. "animogha08@gmail.com" enter karo\n3. Jo Access Key mile, use HTML file mein\n   WEB3FORMS_KEY variable mein paste karo\n\nYe bilkul free hai, koi sign-up nahi!');
+        alert('Setup karna hai:\n\n1. https://web3forms.com par jao\n2. "khudkidukan@gmail.com" enter karo\n3. Jo Access Key mile, use HTML file mein\n   WEB3FORMS_KEY variable mein paste karo\n\nYe bilkul free hai, koi sign-up nahi!');
       } else {
         showToast('❌ Error aaya. Dobara try karein.');
       }
